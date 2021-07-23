@@ -41,16 +41,16 @@
 *
 * 2. Linear Probing 기법 _ 폐쇄 해슁
 *   해쉬 테이블 저장공간 안에서 충돌 문제를 해결하는 기법
-*   추돌이 일어나면, 해당 해쉬 주소의 다음 주소부터 맨 처음에 나오는 빈공간에 저장하는 기법이다.
+*   충돌이 일어나면, 해당 해쉬 주소의 다음 주소부터 맨 처음에 나오는 빈공간에 저장하는 기법이다.
 *       -> 저장공간의 활용도를 높이는 방법
 * */
 
-public class HashTable {
+public class HashTable_chaining {
     // 객체 배열을 만들고
     public Slot[] hashTable;
 
     // 해쉬 테이블 크기를 정해주고
-    public HashTable(Integer size){
+    public HashTable_chaining(Integer size){
         hashTable = new Slot[size];
     }
 
@@ -117,7 +117,7 @@ public class HashTable {
 
 
     public static void main(String[] args) {
-        HashTable hashTable = new HashTable(20);
+        HashTable_chaining hashTable = new HashTable_chaining(20);
         hashTable.saveData("Lee","01011112222");
         hashTable.saveData("Park","01033334444");
         hashTable.saveData("Park1","01055554444");
