@@ -23,6 +23,7 @@ import java.util.*;
 
 public class Prime {
 
+    // 간선에 대한 클래스
     public static class Edge implements Comparable<Edge>{
         public int weight;
         public String node1;
@@ -44,22 +45,26 @@ public class Prime {
     }
 
     public static ArrayList<Edge> primeFunction(String startNode, ArrayList<Edge> edges){
+
         ArrayList<String> connectedNode = new ArrayList<>();
-        ArrayList<Edge> mst = new ArrayList<>();
+        ArrayList<Edge> mst = new ArrayList<>(); // 최소 신장 트리
         ArrayList<Edge> currentEdgeList,candidateEdgeList,adjacentEdgesNodes;
-        HashMap<String,ArrayList<Edge>> adjacentEdges = new HashMap<>();
+        HashMap<String,ArrayList<Edge>> adjacentEdges = new HashMap<>(); // 인접한 간선들의 모음
         Edge currentEdge;
         PriorityQueue<Edge> priorityQueue = new PriorityQueue<>();
 
+        // 모든 간선을 순회하면서! -> 일단 노드에 없으면 추가하자
         for(int i = 0;i<edges.size();i++){
-            currentEdge = edges.get(i);
+            currentEdge = edges.get(i); // 현재의 간선
             if(!adjacentEdges.containsKey(currentEdge.node1)){
                 adjacentEdges.put(currentEdge.node1,new ArrayList<Edge>());
             }
             if(!adjacentEdges.containsKey(currentEdge.node2)){
-                adjacentEdges.put(currentEdge.node1,new ArrayList<Edge>());
+                adjacentEdges.put(currentEdge.node2,new ArrayList<Edge>());
             }
         }
+
+        // 각각 인접해있는 노드를 리스트에 담기
         for(int i = 0; i<edges.size();i++){
             currentEdge = edges.get(i);
             currentEdgeList = adjacentEdges.get(currentEdge.node1);
@@ -70,8 +75,13 @@ public class Prime {
 
         }
 
+        // 시작 노드
         connectedNode.add(startNode);
+
+        // 후보 엣지 리스트들 -> 해당 노드의 인접한 간선들
+        // getOrDefault : 찾는 키가 존재하면 키값을 반환하고 아니면 기본값을 반환하라
         candidateEdgeList = adjacentEdges.getOrDefault(startNode,new ArrayList<Edge>());
+
         for(int i = 0; i<candidateEdgeList.size();i++){
             priorityQueue.add(candidateEdgeList.get(i));
         }
