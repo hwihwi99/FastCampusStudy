@@ -35,7 +35,7 @@
 
 import java.util.*;
 
-public class Prime {
+public class Prim {
 
     // 간선에 대한 클래스
     public static class Edge implements Comparable<Edge>{
