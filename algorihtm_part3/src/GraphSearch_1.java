@@ -56,7 +56,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class GraphSearch {
+public class GraphSearch_1 {
     // 1260을 인접 행렬로 정렬하는 방식!
     static int N,M,V;
     static int [][] adj; // 인접 행렬
