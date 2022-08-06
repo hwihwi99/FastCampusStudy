@@ -38,51 +38,47 @@ public class BST {
         Node left;
         Node right;
         int value;
-        public Node(int data){
-            this.value = data;
+
+        public Node(int value) {
             this.left = null;
             this.right = null;
+            this.value = value;
         }
     }
 
-    public void insertNode(int data){
-        // case 1 )트리가 비어있을 때
-        if(rootNode == null){
-            this.rootNode = new Node(data);
+    public boolean insertNode(int data) {
+        // Case 1. 노드가 하나도 없을 때
+        if (this.rootNode == null) {
+            Node newNode = new Node(data);
+            this.rootNode = newNode;
+            return true;
         }
-        // case 2) 노드가 하나이상 들어가 있을 때
+        // Case 2. 비어있지 않다면
         else{
-            Node currentNode = rootNode;
-            while (true){
-                //case 2-1) : 현재 노드의 왼쪽에 노드가 들어가야 할 때
-                if(data<currentNode.value){
-                    // 현재 노드의 왼쪽이 있다면 다음 노드로 이동 후 다시 검사
-                    if(currentNode.left != null){
-                        currentNode = currentNode.left;
-                    }
-                    // 왼쪽 노드가 없다면? => 왼쪽에 생성
-                    else{
-                        currentNode.left = new Node(data);
+            // 트리 탐색을 할 첫 위치를 찾는다 (루트 노드)
+            Node tempNode = rootNode;
+            while (true) {
+                // Case2-1 : 현재 노드의 왼쪽에 노드가 들어가야 할 때
+                if (data < tempNode.value) {
+                    if (tempNode.left != null) {
+                        tempNode = tempNode.left;
+                    }else {
+                        tempNode.left = new Node(data);
                         break;
                     }
                 }
-                //case 2-2) : 현재 노드의 오른쪽에 들어가야 할 떄
-                else if(data>currentNode.value){
-                    // 현재 노드의 오른쪽이 있다면 다음 노드로 이동 후 다시 검사
-                    if(currentNode.right != null){
-                        currentNode = currentNode.right;
-                    }
-                    // 오른쪽 노드가 없다면? => 오른쪽에 생성
-                    else {
-                        currentNode.right = new Node(data);
-                        break;
-                    }
-                }
-                // case 3 ) 현재 노드와 값이 같을 때는 그냥 값 바꿔치기 -> 사실 같은 역할,, 해줄필요 없어
+
+                // Case2-2 : 현재 노드의 오른쪽에 노드가 들어가야 할 때
                 else{
-                    currentNode.value = data;
+                    if (tempNode.right != null) {
+                        tempNode = tempNode.right;
+                    }else {
+                        tempNode.right = new Node(data);
+                        break;
+                    }
                 }
             }
+            return true;
         }
     }
 
@@ -94,18 +90,13 @@ public class BST {
         }
         //case 2) Node가 하나 이상 있을 때
         Node currentNode = rootNode;
-        while (currentNode != null){
-            // 만약 같다면 값을 찾았다 -> 성공
-            if(currentNode.value == data){
+        while (currentNode != null) {
+            if (currentNode.value == data) {
                 return currentNode;
-            }
-            // 만약 작으면 왼쪽으로!
-            else if(data<currentNode.value){
+            }else if(currentNode.value < data) {
+                    currentNode = currentNode.right;
+            }else {
                 currentNode = currentNode.left;
-            }
-            // 크다면 오룬쪽으로!
-            else if(data > currentNode.value){
-                currentNode = currentNode.right;
             }
         }
         return null;
@@ -120,164 +111,123 @@ public class BST {
     // 삭제할 노드의 오른쪽 자식중 가장 작은 값을 삭제할 노드의 부모 노드가 가리키도록 한다.
 
     // data가 있는 노드를 지우자. 성공 => 참, 실패 => 거짓
-    public boolean deleteNode (int data) {
-        // 원하는 삭제할 노드를 찾으면 true, 아니면 false
-        boolean Searched = false;
+    public boolean deleteNode(int data) {
+        boolean searched = false;
 
-        Node currParentNode = rootNode;
-        Node currNode = rootNode;
+        Node currentParnetNode = this.rootNode;
+        Node currNode = this.rootNode;
 
-        // 일단 이런 경우부터 처리를 해주고!
-
-        // 코너 케이스 1) Node가 하나도 없을 때
-        if (rootNode == null)
+        // 코너 케이스 1 : 노드가 하나도 없을 때
+        if (this.rootNode == null) {
             return false;
-            // 코너 케이스 2) Node가 단지 하나만 있고 그 노드가 삭제할 노드일 때
+        }
+
+        // 코너 케이스 2 : 노드가 단지 하나만 있고, 해당 노드가 삭제할 노드일 때
         else {
-            if (rootNode.value == data && rootNode.left == null && rootNode.right == null) {
-                rootNode = null;
+            if (this.rootNode.right == null && this.rootNode.left == null && this.rootNode.value == data) {
+                this.rootNode = null;
                 return true;
             }
-        }
 
-        // 삭제할 노드를 찾는 중
-        while (currNode != null) {
-            if (currNode.value == data) {
-                // 노드 찾았어!
-                Searched = true;
-                break;
-            } else if (currNode.value > data) {
-                currParentNode = currNode;
-                currNode = currNode.left;
-            } else if (currNode.value < data) {
-                currParentNode = currNode;
-                currNode = currNode.right;
-            }
-        }
-
-
-        if (!Searched) {
-            // 삭제할 노드가 없으면 false
-            return false;
-        }
-
-        // 여기까지 실행되면
-        // currNode에 해당 데이터를 가지고 있는 노드,
-        // creeParentNode에는 해당 데이터를 가지고 있는 노드의 부모 노드
-
-        // case 1 : 삭제할 노드가 leaf 노드일 경우
-        if (currNode.right == null && currNode.left == null){
-            //부모의 왼쪽 노드야?
-            if(data < currParentNode.value){
-                currParentNode.left = null; // 부모 왼쪽 끊어
-                currNode = null; // 삭제한 노드도 비워
-            }
-            //부모의 오른쪽 노드야?
-            else if(data > currParentNode.value){
-                currParentNode.right = null; // 부모 오른쪽 끊어
-                currNode = null; // 삭제한 노드도 비워
-            }
-        }
-
-        // case 2 : 삭제할 노드가 child Node를 한개 가지고 있을 경우
-
-        // case 2 - 1 : 왼쪽에 child Node가 있을 경우
-        else if((currNode.right == null && currNode.left != null)){
-            // 부모 노드보다 작은 값이야? => 왼쪽노드야?
-            if(currParentNode.value > data ){
-                currParentNode.left = currNode.left;
-                currNode = null;
-            }
-            // 부모 노드보다 큰 값이야? => 오른쪽 노드야?
-            else if(currParentNode.value < data){
-                currParentNode.right = currNode.left;
-                currNode = null;
-            }
-        }
-        // case 2 - 2 : 오른쪽에 child Node가 있을 경우
-        else if((currNode.right != null && currNode.left == null)){
-            // 부모 노드보다 작은 값이야? => 왼쪽노드야?
-            if(currParentNode.value > data ){
-                currParentNode.left = currNode.right;
-                currNode = null;
-            }
-            // 부모 노드보다 큰 값이야? => 오른쪽 노드야?
-            else if(currParentNode.value < data){
-                currParentNode.right = currNode.right;
-                currNode = null;
-            }
-        }
-
-        // case 3 : 삭제할 노드의 child 노드가 2개인 경우
-        else{
-            // case 3-1 : 삭제할 노드가 parent node의 왼쪽에 있을 때
-            if(currParentNode.value > data){
-                // 현재 노드 기준 오른쪽에서 가장 작을 값을 찾아서
-                // 현제 노드와 바꿔치기 한다.
-                Node changeNode = currNode.right;
-                Node changeParentNode = currNode.right;
-
-                // 가장 작은 값 찾는 중
-                while(changeNode.left != null){
-                    changeParentNode = changeNode;
-                    changeNode = changeNode.left;
+            while (currNode != null) {
+                if (currNode.value == data) {
+                    searched = true;
+                    break;
+                }else if (currNode.value > data) {
+                    currentParnetNode = currNode;
+                    currNode = currNode.left;
+                } else {
+                    currentParnetNode = currNode;
+                    currNode = currNode.right;
                 }
-                // 삭제할 노드의 오른쪽 링크에서 가장 작은 값 찾기 성공
-
-                // case 3-1-1 : 가장 작은 값을 가진 node에게 자식 노드가 없을 때 -> 이러면 그냥 바꾸기
-                if(changeNode.right == null){
-                    changeParentNode.left = null;
-                }
-                // case 3-1-2 : 가장 작은 값을 가진 node에게 오른쪽에 childNode가 있을 때
-                else{
-                    changeParentNode.left = changeNode.right;
-                }
-
-                // currParnetNode의 왼쪽 child 노드에 삭제할 노드의 오른쪽 자식 중
-                // 가장 작은 값을 가진 change노드 연결
-                currParentNode.left = changeNode;
-
-                // currParentNode의 왼쪽 자식 노드가 현재 change노드이다.
-                changeNode.left = currNode.left;
-                changeNode.right = currNode.right;
-
-                currNode = null;
             }
 
-            // case 3-2 : 삭제할 노드가 parent node의 오른쪽에 있을 때
-            else if (currParentNode.value < data){
-                // 현재 노드 기준 오른쪽에서 가장 작을 값을 찾아서
-                // 현제 노드와 바꿔치기 한다.
-                Node changeNode = currNode.right;
-                Node changeParentNode = currNode.right;
-
-                // 가장 작은 값 찾는 중
-                while(changeNode.left != null){
-                    changeParentNode = changeNode;
-                    changeNode = changeNode.left;
-                }
-                // 삭제할 노드의 오른쪽 링크에서 가장 작은 값 찾기 성공
-
-                // case 3-2-1 : 가장 작은 값을 가진 node에게 자식 노드가 없을 때 -> 이러면 그냥 바꾸기
-                if(changeNode.right == null){
-                    changeParentNode.left = null;
-                }
-                // case 3-2-2 : 가장 작은 값을 가진 node에게 오른쪽에 childNode가 있을 때
-                else{
-                    changeParentNode.left = changeNode.right;
-                }
-
-                currParentNode.right = changeNode;
-                changeNode.right = currNode.right;
-                changeNode.left = currNode.left;
-
-                currNode = null;
-
+            // 삭제할 노드를 찾았을 때, 못 찾았을 때로 나뉜다.
+            if (searched == false) {
+                return false;
             }
+
+            // 여기까지 실행하면 currentNode에는 삭제할 노드, currentParentNode에는 삭제할 노드의 부모노드
+
+            // case 1 : 삭제할 노드가 리프노드인 경우
+            if (currNode.left == null && currNode.right == null) {
+                if(data < currentParnetNode.value) {
+                    currentParnetNode.left = null;
+                }else {
+                    currentParnetNode.right = null;
+                }
+                return true;
+            }
+            // case 2 : 삭제할 노드에 자식이 한개인 경우
+            // case 2-1 : 왼쪽에 있을 경우
+            else if (currNode.left != null && currNode.right == null) {
+                if(data < currentParnetNode.value) {
+                    currentParnetNode.left = currNode.left;
+                }else {
+                    currentParnetNode.right = currNode.left;
+                }
+                return true;
+            }
+            // case 2-2 : 오른쪽에 있을 경우
+            else if (currNode.left == null && currNode.right != null) {
+                if(data < currentParnetNode.value) {
+                    currentParnetNode.left = currNode.right;
+                }else {
+                    currentParnetNode.right = currNode.right;
+                }
+                return true;
+            }
+
+            // case 3 : 자식이 두개 다 있을 때
+            else {
+                // 3-1 : 삭제할 노드가 부모 노드의 왼쪽에 있을 때
+                if (data < currentParnetNode.value) {
+                    Node tempNode = currNode.right;
+                    Node tempParentNode = currNode.right;
+                    while (tempNode.left != null) {
+                        tempParentNode = tempNode;
+                        tempNode = tempNode.left;
+                    }
+
+                    // changeNode의 자식이 없을 때
+                    if (tempNode.right == null) {
+                        tempParentNode.left = null;
+                    }
+                    // 있을 때
+                    else {
+                        tempParentNode.left = tempNode.right;
+                    }
+
+                    currentParnetNode.left = tempNode;
+                    tempNode.left = currNode.left;
+                    tempNode.right = currNode.right;
+                }
+                // 3-2 : 삭제할 노드가 부모 노드의 오른쪽에 있을 때
+                else {
+                    Node tempNode = currNode.right;
+                    Node tempParentNode = currNode.right;
+                    while (tempNode.left != null) {
+                        tempParentNode = tempNode;
+                        tempNode = tempNode.left;
+                    }
+
+                    // changeNode의 자식이 없을 때
+                    if (tempNode.right == null) {
+                        tempParentNode.left = null;
+                    }
+                    // 있을 때
+                    else {
+                        tempParentNode.left = tempNode.right;
+                    }
+
+                    currentParnetNode.right = tempNode;
+                    tempNode.left = currNode.left;
+                    tempNode.right = currNode.right;
+                }
+            }
+            return true;
         }
-         return true;
     }
-
 
     public static void main(String[] args) {
         BST tree = new BST();
